@@ -1,0 +1,182 @@
+:root {
+    --saf-color: rgb(73, 76, 121);
+    --safi-color: rgb(51, 54, 91);
+    --aoife-color: rgb(199, 131, 182);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+html {
+    background: radial-gradient(circle, var(--saf-color), var(--safi-color));
+}
+
+/* -------- General Styling -------- */
+
+#main-title {
+    font-family: Impact;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    color: white;
+    font-size: 10rem;
+}
+
+body > img {
+    width: 15%;
+    height: 15%;
+    bottom: 1rem;
+    right: 1rem;
+    position: fixed;
+    animation: borderChange 1s infinite ease-in-out alternate;
+}
+
+.screen > button {
+    border: none;
+    background-color: var(--aoife-color);
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.screen > button:hover {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    background-color: purple;
+    transform: scale(1.1);
+}
+
+body {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    border: solid 2px white;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    border-radius: 10%;
+    padding: 60px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* -------- Screens -------- */
+.screen {
+    display: none;
+    padding: 1rem;
+}
+
+.screen.visible {
+    display: block;
+}
+
+/* -------- Start Screen -------- */
+
+#start-screen > h1 {
+    font-family: Impact;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    color: var(--aoife-color);
+    margin-bottom: 1rem;
+}
+
+#start-screen > p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+/* -------- Quiz Screen --------*/
+.quiz-header {
+    margin-bottom: 20px;
+}
+
+#question-text {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.quiz-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.answers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.answers-button {
+    background: var(--safi-color);
+    color: var(--aoife-color);
+    padding: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease-in-out;
+}
+
+.answers-button:hover {
+    background-color: var(--aoife-color);
+    color: var(--safi-color);
+    transform: scale(1.1);
+}
+
+.answers-button.correct {
+    background-color: green;
+    color: white;
+}
+
+.answers-button.wrong {
+    background-color: red;
+    color: white;
+}
+
+.progress-bar {
+    height: 10px;
+    background-color: rgb(187, 187, 187);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: rgb(44, 218, 44);
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+/* -------- Results Screen -------- */
+#results-screen > h1 {
+    font-family: Impact;
+    text-shadow: 0px 5px 4px rgba(100, 23, 52, 0.9);
+    color: var(--aoife-color);
+    margin-bottom: 1rem;
+}
+
+.result-info > p {
+    background: rgba(0, 0, 0, 0.4);
+    width: calc(100% + 120px);
+    margin-left: -60px;
+    margin-right: -60px;
+    color: var(--aoife-color);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+/* -------- Animations -------- */
+
+@keyframes borderChange { /* This the only thing I'm good at bruh 😭🙏 */
+    from { border-radius: 50%; }
+    to { border-radius: 30%; }
+}

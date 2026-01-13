@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quiz Game</title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <h1 id="main-title"> Quiz Game </h1>
+        <img src="https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:enklsfmeecrbb4ied4ondsvm/bafkreiecf5haetsqksmlbah7wphebkerpmzl2kkmyevyqe2txp47zsethe@jpeg"> <br><br>
+        <div class="container">
+            <div class="screen visible" id="start-screen"> <!-- Space indicates multi-class -->
+                <h1>Welcome to the Quiz</h1>
+                <p> Test your knowledge </p>
+                <button id="start-button">Start Quiz</button>
+            </div>
+            <div class="screen" id="quiz-screen">
+
+                <div class="quiz-header">
+                    <h2 id="question-text"> Question goes here </h2>
+                    <div class="quiz-info">
+                        <p>
+                            Question <span id="current-question"></span> of <span id="total-questions"></span>
+                        </p>
+                        <p>
+                            Score: <span id="score"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="answers-container">
+                    <!-- Answers go here -->
+                     <!-- answers-button here -->
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+
+            </div>
+            <div class="screen" id="results-screen">
+                <h1>Quiz Results</h1>
+                <div class="result-info">
+                    <p> Final Score: X <span id="final-score"></span> out of X <span id="total-questions"></span></p>
+                </div>
+                <div class="result-message"> Job Job </div>
+                <button id="retry-button">Retry</button>
+            </div>
+        </div>
+    </body>
+</html>
