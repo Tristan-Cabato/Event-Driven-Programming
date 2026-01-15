@@ -15,22 +15,54 @@ html {
     background: radial-gradient(circle, var(--saf-color), var(--safi-color));
 }
 
+html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://cdn-icons-png.flaticon.com/512/2080/2080878.png') repeat;
+    background-size: 100px 100px; /* Adjust the size of the icons */
+    opacity: 0.3; /* Make it semi-transparent */
+    pointer-events: none; /* Make sure it doesn't interfere with clicks */
+    z-index: 1;
+    animation: slide 60s linear infinite; /* Sliding animation */
+}
+
 /* -------- General Styling -------- */
 
-#main-title {
+#main-title, #main-title > span {
     font-family: Impact;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
     color: white;
     font-size: 10rem;
 }
 
+#main-title > span {
+    background: linear-gradient(to right, var(--aoife-color), white);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 5px 5px 2px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    position: relative;
+    z-index: 2;
+}
+
 body > img {
-    width: 15%;
-    height: 15%;
+    width: 100px;
+    height: 100px;
     bottom: 1rem;
     right: 1rem;
     position: fixed;
-    animation: borderChange 1s infinite ease-in-out alternate;
+    border-radius: 50%;
+    border: solid 5px white;
+    animation: rainbow-border 3s infinite ease-in-out alternate;
+    padding: 2px;
+    object-fit: cover;
 }
 
 .screen > button {
@@ -63,9 +95,10 @@ body {
     background: rgba(0, 0, 0, 0.2);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
     border-radius: 10%;
-    padding: 60px;
+    padding: 5rem;
     overflow: hidden;
     position: relative;
+    backdrop-filter: blur(10px);
 }
 
 /* -------- Screens -------- */
@@ -176,7 +209,27 @@ body {
 
 /* -------- Animations -------- */
 
-@keyframes borderChange { /* This the only thing I'm good at bruh 😭🙏 */
-    from { border-radius: 50%; }
-    to { border-radius: 30%; }
+@keyframes rainbow-border {
+  0% { 
+    border-color: #ff0000;
+    border-style: dotted;
+ } 16% { border-color: #ff7f00; }
+  33% { 
+    border-color: #ffff00;
+    border-style: dashed;
+ } 50% { border-color: #00ff00; }
+  66% { border-color: #0000ff; }
+  83% { 
+    border-color: #4b0082;
+    border-style: double;
+ } 100% { border-color: #9400d3; }
+}
+
+@keyframes slide {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 1000px 1000px; /* Adjust for diagonal movement */
+    }
 }
