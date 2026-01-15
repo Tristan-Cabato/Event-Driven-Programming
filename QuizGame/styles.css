@@ -23,11 +23,13 @@ html::before {
     right: 0;
     bottom: 0;
     background: url('https://cdn-icons-png.flaticon.com/512/2080/2080878.png') repeat;
-    background-size: 100px 100px; /* Adjust the size of the icons */
-    opacity: 0.3; /* Make it semi-transparent */
-    pointer-events: none; /* Make sure it doesn't interfere with clicks */
+    background-size: 100px 100px;
+    transform: scale(1.5);
+    opacity: 0.04;
+    pointer-events: none;
+    rotate: -45deg;
     z-index: 1;
-    animation: slide 60s linear infinite; /* Sliding animation */
+    animation: slide 60s linear infinite;
 }
 
 /* -------- General Styling -------- */
@@ -63,6 +65,7 @@ body > img {
     animation: rainbow-border 3s infinite ease-in-out alternate;
     padding: 2px;
     object-fit: cover;
+    z-index: 3;
 }
 
 .screen > button {
@@ -73,6 +76,7 @@ body > img {
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    margin-top: 1rem;
 }
 
 .screen > button:hover {
@@ -143,18 +147,18 @@ body {
     margin-bottom: 2rem;
 }
 
-.answers-container {
+#answers-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
 .answers-button {
-    background: var(--safi-color);
+    background: var(--saf-color);
     color: var(--aoife-color);
     padding: 1rem;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
     transition: all 0.3s ease-in-out;
 }
 
@@ -165,16 +169,17 @@ body {
 }
 
 .answers-button.correct {
-    background-color: green;
+    background-color: rgba(0, 255, 0, 0.6);
     color: white;
 }
 
 .answers-button.wrong {
-    background-color: red;
+    background-color: rgba(255, 0, 0, 0.2);
     color: white;
 }
 
 .progress-bar {
+    margin-top: 2rem;
     height: 10px;
     background-color: rgb(187, 187, 187);
     border-radius: 5px;
@@ -185,7 +190,7 @@ body {
     height: 100%;
     background-color: rgb(44, 218, 44);
     width: 0;
-    transition: width 0.3s ease-in-out;
+    transition: width 0.3s ease;
 }
 
 /* -------- Results Screen -------- */
@@ -226,10 +231,6 @@ body {
 }
 
 @keyframes slide {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: 1000px 1000px; /* Adjust for diagonal movement */
-    }
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
 }

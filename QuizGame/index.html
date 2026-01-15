@@ -3,7 +3,6 @@
     <head>
         <title>Quiz Game</title>
         <link rel="stylesheet" href="styles.css">
-        <script src="script.js"></script>
     </head>
     <body>
         <h1 id="main-title"> <span>Quiz</span> Game </h1>
@@ -20,7 +19,7 @@
                     <h2 id="question-text"> Question goes here </h2>
                     <div class="quiz-info">
                         <p>
-                            Question <span id="current-question"></span> of <span id="total-questions"></span>
+                            Question <span id="current-question"> </span> of <span id="total-questions"></span>
                         </p>
                         <p>
                             Score: <span id="score"></span>
@@ -28,9 +27,9 @@
                     </div>
                 </div>
                 
-                <div class="answers-container">
+                <div id="answers-container">
                     <!-- Answers go here -->
-                     <!-- answers-button here -->
+                    <!-- answers-button here -->
                 </div>
 
                 <div class="progress-bar">
@@ -41,11 +40,12 @@
             <div class="screen" id="results-screen">
                 <h1>Quiz Results</h1>
                 <div class="result-info">
-                    <p> Final Score: X <span id="final-score"></span> out of X <span id="total-questions"></span></p>
+                    <p> Final Score: <span id="final-score"></span> out of <span id="max-score"></span></p>
                 </div>
                 <div class="result-message"> Job Job </div>
-                <button id="retry-button">Retry</button>
+                <button id="restart-button">Retry</button>
             </div>
         </div>
     </body>
+    <script src="script.js"></script>
 </html>
