@@ -85,6 +85,10 @@ body > img {
     transform: scale(1.1);
 }
 
+#results-screen button {
+    margin-left: 1rem;
+}
+
 body {
     color: white;
     display: flex;

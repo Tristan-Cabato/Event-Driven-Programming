@@ -3,6 +3,7 @@ const QuizScreen = document.getElementById("quiz-screen");
 const ResultsScreen = document.getElementById("results-screen");
 const startButton = document.getElementById("start-button");
 const questionText = document.getElementById("question-text");
+const homeButton = document.getElementById("home-button");
 const answersContainer = document.getElementById("answers-container");
 const currentQuestionSpan = document.getElementById("current-question");
 const totalQuestionsSpan = document.getElementById("total-questions");
@@ -73,6 +74,7 @@ maxScoreSpan.textContent = quizQuestions.length;
 // Event Listeners
 startButton.addEventListener("click", startQuiz);
 restartButton.addEventListener("click", retry);
+homeButton.addEventListener("click", home);
 
 function startQuiz() {
     console.log("Quiz Button Clicked");
@@ -132,7 +134,7 @@ function selectAnswer(event) {
         currentQuestionIndex++;
         if(currentQuestionIndex < quizQuestions.length) { showQuestion(); }
         else { showResults(); }
-    }, 500);
+    }, 700);
 }
 
 function showResults() {
@@ -153,4 +155,9 @@ function showResults() {
 function retry() {
     ResultsScreen.classList.remove("visible");
     startQuiz();
+}
+
+function home() {
+    ResultsScreen.classList.remove("visible");
+    StartScreen.classList.add("visible");
 }
