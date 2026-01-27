@@ -1,0 +1,171 @@
+/* Basic Reset */
+
+/* From Google Fonts or install the extension Google Fonts */
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap'); */
+/* @import url(https://fonts.googleapis.com/css?family=Roboto:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic); */
+@import url(https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic);
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #F63049, #111F35);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.container::after,
+.container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: conic-gradient(from var(--angle), red, orange, yellow, green, blue, purple, red);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 5px;
+    border-radius: inherit;
+    animation: 3s spin linear infinite;
+}
+
+.container::before {
+    filter: blur(1.5rem);
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg;
+    }
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+h1::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(to right, red, orange 20%, yellow 40%, green 60%, blue 80%, red);
+    background-size: 200%;
+    border-radius: 2px;
+    animation: gradientAnimation 5s linear infinite;
+}
+
+@keyframes gradientAnimation {
+    to {
+        background-position: 200%;
+    }
+}
+
+#generate-btn {
+    background: linear-gradient(45deg, #F63049, #111F35);
+    color: white;
+    border: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 1);
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    position: relative;
+}
+
+#generate-btn:hover {
+    translate: 0 -2px;
+    box-shadow: 0 6px 10px rgba(71, 25, 25, 0.3);
+}
+
+#generate-btn:active {
+    translate: 0;
+}
+
+.palette-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
+
+.color-box {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 1);
+    transition: translate 0.2s;
+}
+
+.color-box:hover {
+    translate: 0 -5px;
+}
+
+.color {
+    height: 120px;
+    cursor: pointer;
+}
+
+.color-info {
+    background-color: #fff;
+    padding: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.hex-value {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.copy-btn {
+    cursor: pointer;
+    color: #111F35;
+    transition: color 0.3 ease;
+}
+
+.copy-btn:hover {
+    color: #F63049;
+}
+
+@media(max-width:770px) {
+    .palette-container {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}
