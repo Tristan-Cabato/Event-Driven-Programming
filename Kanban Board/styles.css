@@ -1,27 +1,17 @@
+/* No imports allowed ----<
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
-
-/* Ubuntu */
-
-
+ Ubuntu >-----
+*/
 
 :root {
-    --bg: #d9c7b4;
-    --surface: #8b7f71;
-    --surface-alt: #7d684d;
-    --text: #f8fafc;
-    --muted: #cbd5e1;
-    --accent: rgba(255, 255, 255, 0.6);
-    --shadow: rgba(15, 23, 42, 0.25);
-    --outline: rgba(169, 169, 169, 0.4);
-    --header-height: 72px;
+    --safi-color: #414d67;
+    --safi-light-color: #839ab1;
 }
 
 
 
 * {
-
-    font-family: 'Ubuntu', sans-serif;
-
+    font-family: 'Arial', sans-serif;
     box-sizing: border-box;
 
     margin: 0;
@@ -62,30 +52,14 @@ body {
 
 
 
-h1 {
-
-    font-size: 3rem;
-
-    color: none;
-
-    box-shadow: 0 0 10px var(--safi-color);
-
-    padding: 1rem;
-
-    margin-bottom: 1.2rem;
-
-}
-
-
-
 .board {
-
-    display: flex;
-
+    /* Changed */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    /* Only extends horizontally */
     justify-content: space-around;
-
-    align-items: flex-start;
-
+    align-items: left;
+    text-align: left;
     width: 100%;
 
     max-width: 1200px;
@@ -137,7 +111,9 @@ h1 {
 
 
 .card {
-
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: rgba(255, 255, 255, 0.2);
 
     margin-bottom: 0.5rem;
@@ -181,5 +157,120 @@ h1 {
         align-items: center;
 
     }
+}
 
+/* ============== New Additions ============== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin-bottom: 1rem;
+    top: 0;
+    position: fixed;
+    width: 100%;
+    background-color: var(--safi-color);
+    padding: 2rem;
+}
+
+.list-header>h2 {
+    font-size: 2.5rem;
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    /* Separator */
+    padding-bottom: 1rem;
+    border-bottom: solid 1px white;
+}
+
+.list-buttons>button {
+    display: flex;
+    flex-direction: column;
+    background: none;
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 1.5rem;
+    min-width: 30px;
+    /* Locks the button width */
+}
+
+.card-buttons {
+    display: flex;
+    flex-direction: column;
+    background: none;
+    gap: 3px;
+}
+
+.card-buttons>button {
+    border: none;
+    background: none;
+    color: white;
+    transition: ease 0.3s all;
+}
+
+.header button,
+.header select {
+    background-color: var(--safi-light-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    /* TopBottom(0.5), LeftRight(1) */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header button:hover,
+.header select:hover {
+    transform: scale(1.3);
+}
+
+.searchBar {
+    display: flex;
+    justify-content: center;
+    color: black;
+    background: white;
+    width: 30%;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+#categories {
+    /* In Cards */
+    border: solid 1px white;
+    text-align: center;
+    border-radius: 27%;
+    background: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 10px 5px;
+    appearance: none;
+    /* Removes Arrow */
+}
+
+#categories:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.2);
+}
+
+#delete-list:hover,
+#delete-card:hover {
+    transform: scale(1.2);
+    color: red;
+    cursor: pointer;
+}
+
+#add-list:hover,
+#add-card:hover {
+    transform: scale(1.2);
+    color: rgb(0, 223, 0);
+    cursor: pointer;
 }

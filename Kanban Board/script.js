@@ -27,3 +27,44 @@ function dragDrop(e) {
     this.appendChild(card);
     this.classList.remove("over");
 }
+
+/* ======= New Code ========== */
+
+/* Category Logic */
+const categoryList = ['test', 'test2']; /* Text Content Only */
+
+const categoryCreator = document.getElementById("create-categories");
+const deleteCategory = document.getElementById("delete-categories");
+const categories = document.getElementById("categories"); /* In the card */
+
+categoryCreator.addEventListener("click", createCategory);
+function createCategory() {
+    const categoryName = prompt("Enter category name:");
+    if (categoryName) {
+        categoryList.push(categoryName);
+        console.log(categoryList);
+    }
+}
+
+function displayDeleteList() {
+    deleteCategory.innerHTML = '<option>Delete Category</option>';
+    
+    categoryList.forEach(category => {
+        const option = new Option(category);
+        deleteCategory.add(option);
+    });
+}
+function displayCardList() {
+    categories.innerHTML = '<option>Default</option>';
+    
+    categoryList.forEach(category => {
+        const option = new Option(category);
+        categories.add(option);
+    });
+}
+
+// Dropdowns on page load
+document.addEventListener('DOMContentLoaded', () => {
+    displayDeleteList();
+    displayCardList();
+});
