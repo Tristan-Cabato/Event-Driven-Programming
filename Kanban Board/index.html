@@ -7,11 +7,26 @@
 
 <body>
     <div class="header">
-        <button id="create-categories"> Create Categories </button>
+        <div class="rightNav">
+            <select id="project-select">
+                <option > Projects</option>
+            </select>
+            <select id="category-select"> 
+                <option > Tags </option>
+                <!-- JS Will add it here -->
+            </select>
+        </div>
+        <div class="searchBar" contenteditable="true"> Search </div>
+        <div class="leftNav">
+            <button id="create-categories"> Create Category </button>
+            <select id="delete-categories"> 
+                <option >Delete Category</option>
+                <!-- JS Will add it here -->
+            </select>
+        </div>
     </div>
 
     <div class="container">
-        <h1>Kanban Board</h1>
         <div class="board">
             <!-- JS will add lists here -->
             <div class="list">
