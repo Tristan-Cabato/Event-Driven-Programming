@@ -1,13 +1,15 @@
+/* No imports allowed ----<
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
-/* Ubuntu */
+ Ubuntu >-----
+*/
 
 :root {
-    --safi-color: #2c3e50;
+    --safi-color: #414d67;
     --safi-light-color: #839ab1;
 }
 
 * {
-    font-family: 'Ubuntu', sans-serif;
+    font-family: 'Arial', sans-serif;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -66,6 +68,9 @@ h1 {
 }
 
 .card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: rgba(255, 255, 255, 0.2);
     margin-bottom: 0.5rem;
     padding: 0.5rem;
@@ -89,3 +94,102 @@ h1 {
         align-items: center;
     }
 }
+
+/* ============== New Additions ============== */
+
+.header {
+    margin-bottom: 1rem;
+    top: 0;
+    position: fixed;
+    width: 100%;
+    background-color: var(--safi-color);
+    padding: 2rem;
+}
+
+.list-header > h2 { font-size: 2.5rem; }
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    /* Separator */
+    padding-bottom: 1rem;
+    border-bottom: solid 1px white;
+}
+
+.list-buttons > button{
+    display: flex;
+    flex-direction: column;
+    background: none;
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 1.5rem;
+    min-width: 30px; /* Locks the button width */
+}
+
+.card-buttons {
+    display: flex;
+    flex-direction: column;
+    background: none;
+    gap: 3px;
+}
+
+.card-buttons > button {
+    border: none;
+    background: none;
+    color: white;
+    transition: ease 0.3s all;
+}
+
+#create-categories {
+    background-color: var(--safi-light-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#create-categories:hover {
+    transform: scale(1.3);
+}
+
+#categories {
+    border: solid 1px white;
+    text-align: center;
+    border-radius: 27%;
+    background: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px 25px 5px 10px;
+    appearance: none;
+    /* Override dropdown arrow */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+}
+
+#categories:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.2);
+}
+
+#delete-list:hover, #delete-card:hover {
+    transform: scale(1.2);
+    color: red;
+    cursor: pointer;
+}
+
+#add-list:hover, #add-card:hover {
+    transform: scale(1.2);
+    color: rgb(0, 223, 0);
+    cursor: pointer;
+}
+
+
+
