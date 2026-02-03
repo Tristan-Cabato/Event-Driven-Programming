@@ -15,7 +15,7 @@ const uiState = {
     filterCategory: "",
     projectName: "",
     editingListId: null
-};
+}; /* Overkill */
 
 const state = loadState();
 
@@ -122,7 +122,8 @@ function handleAddList() {
     });
     saveState();
     renderBoard();
-    focusListTitle(state.lists[state.lists.length - 1].id);
+    focusListTitle(state.lists[state.lists.length - 1].id);  
+    /* Auto-Selects on added list */
 }
 
 function handleCreateCategory() {
@@ -527,6 +528,7 @@ function renderBoard() {
         }
         board.appendChild(createListElement(list, filteredCards));
     });
+    
     renderCategoryControls();
     renderProjectControls();
 }
