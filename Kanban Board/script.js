@@ -266,31 +266,12 @@ function createCardElement(card, listId) {
         editButton.className = "card-action edit";
         editButton.textContent = "✎";
         editButton.setAttribute("aria-label", "Edit card");
-    
-    editButton.addEventListener("click", function(e) {
-        e.stopPropagation();
-        const cardElement = this.closest(".card");
-        const cardId = cardElement ? cardElement.dataset.cardId : null;
-        if (cardId) {
-            uiState.editingCardId = cardId;
-            uiState.activeFormListId = null;
-            renderBoard();
-        }
-    });
 
     const deleteButton = document.createElement("button");
         deleteButton.type = "button";
         deleteButton.className = "card-action delete";
         deleteButton.textContent = "🗑";
         deleteButton.setAttribute("aria-label", "Delete card");
-    
-    deleteButton.addEventListener("click", function(e) {
-        e.stopPropagation();
-        const cardId = this.closest(".card").dataset.cardId;
-        removeCardById(cardId);
-        saveState();
-        renderBoard();
-    });
 
     actions.appendChild(editButton);
     actions.appendChild(deleteButton);
@@ -605,8 +586,7 @@ function handleBoardClick(e) {
         if (listId) {
             uiState.activeFormListId = listId;
             renderBoard();
-        }
-        return;
+        } return;
     }
 
     const deleteListButton = e.target.closest(".delete-list");
@@ -617,8 +597,7 @@ function handleBoardClick(e) {
         state.lists = state.lists.filter(l => l.id !== listId);
         if (!state.lists.length) {
             state.lists.push({ id: createId("list"), title: "To Do", cards: []});
-        }
-        saveState();
+        } saveState();
 
         if (uiState.activeFormListId) { uiState.activeFormListId = null; }
         renderBoard();
@@ -630,11 +609,30 @@ function handleBoardClick(e) {
         uiState.activeFormListId = null;
         renderBoard();
         return;
-    }
+    } /* Form */
 
     const cancelEditButton = e.target.closest(".cancel-edit");
     if (cancelEditButton) {
         uiState.editingCardId = null;
+        renderBoard();
+        return;
+    }
+
+    const editCardButton = e.target.closest(".card-action.edit");
+    if (editCardButton) {
+        const cardId = editCardButton.closest(".card").dataset.cardId;
+        if (cardId) {
+            uiState.editingCardId = cardId;
+            uiState.activeFormListId = null;
+            renderBoard();
+        } return;
+    }
+
+    const deleteCardButton = e.target.closest(".card-action.delete");
+    if (deleteCardButton) {
+        const cardId = deleteCardButton.closest(".card").dataset.cardId;
+        removeCardById(cardId);
+        saveState();
         renderBoard();
         return;
     }
