@@ -47,7 +47,7 @@ body {
     align-items: left;
     text-align: left;
     width: 100%;
-    max-width: 1200px;
+    max-width: none; /* allow board to span full viewport width */
     margin: 0 auto;
     gap: 1rem;
 }
@@ -97,7 +97,8 @@ body {
 
 @media (min-width: 768px) {
     body {
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
         width: 100%;
     }
 
@@ -141,6 +142,14 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f8fafc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+    padding-right: 2rem;
 }
 
 .header select:focus {
@@ -163,10 +172,15 @@ body {
     min-width: 180px;
     max-width: 360px;
     padding: 0.5rem 0.8rem;
+    padding-right: 2rem;
     border-radius: 999px;
     border: 1px solid var(--outline);
     background: rgba(255, 255, 255, 0.12);
     color: var(--text);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f8fafc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'%3e%3c/circle%3e%3cpath d='m21 21-4.35-4.35'%3e%3c/path%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
 }
 
 .searchBar::placeholder {
@@ -174,20 +188,22 @@ body {
 } /* Search bars go darker before a value is given */
 
 /* <--- List Container ---> */
-.container {
-    width: 100%;
+ .container {
+    width: 100vw;
     margin-top: 4.5rem;
     height: calc(100vh - 4.5rem); /* Can't overflow to navbar */
-    padding: 1.2rem 0 2rem 1.2rem;
 }
 
 .board {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
+    justify-content: flex-start;
     gap: 1rem;
     overflow-x: auto;
-    padding-right: 1.2rem;
+    height: 100%;
+    width: 100%;
+    padding-bottom: 1rem;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
@@ -337,20 +353,20 @@ body {
 
 .card-actions {
     position: absolute;
-    top: 0.5rem;
+    top: 50%;
     right: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     opacity: 0;
-    transform: translateX(6px);
+    transform: translateY(-50%) translateX(6px);
     pointer-events: none;
     transition: all 0.2s ease;
 }
 
 .card:hover .card-actions {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(-50%) translateX(0);
     pointer-events: auto;
 }
 
@@ -414,7 +430,13 @@ body {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--outline);
     border-radius: 8px;
-    padding: 0.45rem 0.6rem;
+    color: var(--text);
+    padding: 0.5rem;
+}
+
+.card-form select option,
+.card-edit-form select option {
+    background-color: var(--surface);
     color: var(--text);
 }
 

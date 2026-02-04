@@ -473,15 +473,12 @@ function matchesFilter(card, listMatches) {
 function renderCategoryControls() {
     if (categoryFilterSelect) {
         categoryFilterSelect.innerHTML = "";
-        categoryFilterSelect.appendChild(createPlaceholderOption("Tags"));
-        categoryFilterSelect.appendChild(new Option("All Tags", "all"));
+        categoryFilterSelect.appendChild(createPlaceholderOption("All Tags"));
+        categoryFilterSelect.add(new Option("All Tags", "all"));
         state.categories.forEach(category => {
             categoryFilterSelect.add(new Option(category.name, category.id));
         });
-        categoryFilterSelect.value = "";
-        if (!categoryFilterSelect.value) {
-            categoryFilterSelect.selectedIndex = 0;
-        }
+        categoryFilterSelect.value = uiState.filterCategory || "";
     }
     if (deleteCategorySelect) {
         deleteCategorySelect.innerHTML = "";
@@ -495,7 +492,7 @@ function renderCategoryControls() {
 function renderProjectControls() {
     if (!projectSelect) { return; }
     projectSelect.innerHTML = "";
-    projectSelect.appendChild(createPlaceholderOption("Projects"));
+    projectSelect.appendChild(createPlaceholderOption("All Projects"));
     projectSelect.add(new Option("All Projects", "all"));
     state.lists.forEach(list => {
         projectSelect.add(new Option(list.title, list.title));

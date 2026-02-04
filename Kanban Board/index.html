@@ -1,38 +1,37 @@
 <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kanban Board</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanban Board</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-    <div class="header">
-        <div class="rightNav">
-            <select id="project-select">
-                <option selected disabled hidden>Projects</option> <!-- Value can't be used -->
-            </select>
-            <select id="category-select">
-                <option selected disabled hidden>Tags</option> <!-- Value can't be used -->
-            </select>
+    <body>
+        <div class="header">
+            <div class="rightNav">
+                <select id="project-select">
+                    <option selected disabled hidden>Projects</option> <!-- Value can't be used -->
+                </select>
+                <select id="category-select">
+                    <option selected disabled hidden>Tags</option> <!-- Value can't be used -->
+                </select>
+            </div>
+            <input id="search-input" class="searchBar" type="search" placeholder="Search tasks">
+            <div class="leftNav">
+                <button id="add-list" type="button">Add List</button>
+                <button id="create-categories" type="button">Create Category</button>
+                <select id="delete-categories">
+                    <option selected disabled hidden>Delete Category</option> <!-- Value can't be used -->
+                </select>
+            </div>
         </div>
-        <input id="search-input" class="searchBar" type="search" placeholder="Search tasks">
-        <div class="leftNav">
-            <button id="add-list" type="button">Add List</button>
-            <button id="create-categories" type="button">Create Category</button>
-            <select id="delete-categories">
-                <option selected disabled hidden>Delete Category</option> <!-- Value can't be used -->
-            </select>
-        </div>
-    </div>
 
-    <div class="container"> <!-- To allow horizontal scroll -->
-        <div class="board">
-            <!-- List components handled by JS -->
+        <div class="container"> <!-- To allow horizontal scroll -->
+            <div class="board">
+                <!-- List components handled by JS -->
+            </div>
         </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-
+        <script src="script.js"></script>
+    </body>
 </html>
