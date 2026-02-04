@@ -825,6 +825,8 @@ function removeCardById(cardId) {
     });
 }
 
+/* On hold ==========
+
 function focusCardForm(listId) {
     if (!board) {
         return;
@@ -867,6 +869,8 @@ function focusListTitle(listId) {
         input.select();
     }
 }
+
+=============== */
 
 function matchesFilter(card, listMatches) {
     const filterText = uiState.filterText;
