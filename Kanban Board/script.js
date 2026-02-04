@@ -13,19 +13,115 @@ for (const list of lists) {
     list.addEventListener("drop", dragDrop);
 }
 
-function dragStart(e) { e.dataTransfer.setData("text/plain", e.target.id); }
-function dragEnd() { console.log("Dragged Something"); }
-function dragOver(e) { e.preventDefault(); }
-function dragEnter(e) {
-    e.preventDefault();
-    this.classList.add("over");
+/* ======== Changes ======== */
+
+function dragStart(e) {
+    if (e.target.closest("button, input, select, textarea")) { return; }
+    /* Card Dragging */
+    const card = e.target.closest(".card");
+    if (card) {
+        if (isFilterActive() || card.classList.contains("is-editing")) {
+            return;
+        } activeDragCard = card;
+        card.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move"; // Maintains data being dragged
+        e.dataTransfer.setData("text/plain", card.dataset.cardId || "");
+        return;
+    }
+    /* List Dragging */
+    const list = e.target.closest(".list");
+    activeDragList = list;
+    list.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", list.dataset.listId || "");
 }
-function dragLeave(e) { this.classList.remove("over"); }
-function dragDrop(e) {
-    const id = e.dataTransfer.getData("text/plain");
-    const card = document.getElementById(id);
-    this.appendChild(card);
-    this.classList.remove("over");
+
+function handleDragEnd() {
+    if (activeDragCard) {
+        activeDragCard.classList.remove("dragging");
+        activeDragCard = null;
+        clearListHighlights();
+        if (!isFilterActive()) {
+            syncStateFromDom();
+            saveState();
+        } return;
+    } // Save only when not searching or filtering
+    if (activeDragList) {
+        activeDragList.classList.remove("dragging");
+        activeDragList = null;
+        syncListsFromDom();
+        saveState();
+    }
+}
+
+function handleDragOver(e) {
+    /* <---- List Dragging ----> */
+    if (activeDragList) {
+        e.preventDefault();
+        const afterElement = getListAfterElement(board, e.clientX);
+        if (!afterElement) { // Dragged to the very right
+            if (activeDragList.parentElement !== board || activeDragList !== board.lastElementChild) {
+                board.appendChild(activeDragList);
+            } return;
+        }
+        if (afterElement === activeDragList) { return; }
+        if (activeDragList.parentElement === board && activeDragList.nextElementSibling === afterElement) {
+            return;
+        } // Basically before the next element (Right position)
+        board.insertBefore(activeDragList, afterElement);
+        return;
+    }
+    const list = e.target.closest(".list");
+    if (!list || !activeDragCard || isFilterActive()) { return; }
+    
+    /* <---- Card Dragging ----> */
+    e.preventDefault();
+    const cardList = list.querySelector(".card-list");
+    if (!cardList) { return; }
+    
+    const afterElement = getDragAfterElement(cardList, e.clientY);
+    if (!afterElement) {
+        if (activeDragCard.parentElement !== cardList || activeDragCard !== cardList.lastElementChild) {
+            cardList.appendChild(activeDragCard);
+        } return;
+    }
+    if (afterElement === activeDragCard) { return; }
+    if (activeDragCard.parentElement === cardList && activeDragCard.nextElementSibling === afterElement) { return; }
+    cardList.insertBefore(activeDragCard, afterElement); // Same parent repositioning
+}
+
+function handleDragEnter(e) { // Can't reposition lists on state while filtering
+    if (activeDragList) { return; }
+    const list = e.target.closest(".list");
+    if (!list || isFilterActive()) { return; }
+    list.classList.add("over");
+}
+
+function handleDragLeave(e) { // Highlight while dragging 
+    if (activeDragList) { return; }
+    const list = e.target.closest(".list");
+    if (!list || isFilterActive()) { return; }
+    if (list.contains(e.relatedTarget)) { return; }
+    list.classList.remove("over");
+}
+
+/* <!---- Continue from here ----> */
+
+function handleDragDrop(e) {
+    if (activeDragList) {
+        e.preventDefault();
+        syncListsFromDom();
+        saveState();
+        return;
+    }
+    const list = e.target.closest(".list");
+    if (!list || isFilterActive()) {
+        return;
+    }
+    e.preventDefault();
+    list.classList.remove("over");
+    syncStateFromDom();
+    saveState();
 }
 
 /* ======= New Code ========== */
@@ -174,3 +270,105 @@ function handleProjectChange() { renderBoard(); }
 /* These can be completely removed later */
 
 /* Board Logic */
+function handleBoardClick(e) {
+    const addCardButton = e.target.closest(".add-card");
+    if (addCardButton) {
+        renderBoard();
+        return;
+    }
+
+    const deleteListButton = e.target.closest(".delete-list");
+    if (deleteListButton) {
+        state.lists = state.lists.filter(list => list.id !== listId);
+        if (uiState.projectName && !state.lists.some(list => list.title === uiState.projectName)) {
+            uiState.projectName = "";
+        }
+        if (!state.lists.length) {
+            state.lists.push({ id: createId("list"), title: "To Do", cards: []});
+        }
+        saveState();
+        renderBoard();
+        return;
+    }
+
+    const editCardButton = e.target.closest(".card-action.edit");
+    if (editCardButton) {
+        renderBoard();
+        return;
+    }
+
+    const deleteCardButton = e.target.closest(".card-action.delete");
+    if (deleteCardButton) {
+        const cardId = deleteCardButton.closest(".card").dataset.cardId;
+        removeCardById(cardId);
+        saveState();
+        renderBoard();
+        return;
+    }
+
+    const cancelCardButton = e.target.closest(".cancel-card");
+    if (cancelCardButton) {
+        renderBoard();
+        return;
+    }
+
+    const cancelEditButton = e.target.closest(".cancel-edit");
+    if (cancelEditButton) {
+        renderBoard();
+        return;
+    }
+
+    const tagRemoveButton = e.target.closest(".tag-remove");
+    if (tagRemoveButton) {
+        const cardId = tagRemoveButton.closest(".card").dataset.cardId;
+        const card = findCardById(cardId);
+        if (card) {
+            card.categoryId = "";
+            saveState();
+            renderBoard();
+        }
+    }
+}
+
+function handleBoardChange(e) {
+    const titleInput = e.target.closest(".list-title-input");
+    if (!titleInput) { return; }
+    if (!uiState.editingListId || uiState.editingListId !== titleInput.dataset.listId) { return; }
+    commitListTitle(titleInput.dataset.listId, titleInput.value);
+}
+
+function handleBoardSubmit(e) {
+    const form = e.target.closest("form"); /* I'll check what form is later */
+    if (!form) { return; }
+    e.preventDefault();
+
+    if (form.classList.contains("card-form")) {
+        const listId = form.dataset.listId;
+        const list = state.lists.find(item => item.id === listId);
+        if (!list) { return; }
+        const title = form.querySelector("input[name='title']").value.trim();
+        const categoryId = form.querySelector("select[name='category']").value;
+        if (!title) { return; }
+        list.cards.push({
+            id: createId("card"),
+            title,
+            categoryId: categoryId || ""
+        });
+        saveState();
+        renderBoard();
+        return;
+    }
+
+    if (form.classList.contains("card-edit-form")) {
+        const cardId = form.dataset.cardId;
+        const card = findCardById(cardId);
+        if (!card) { return; }
+        const title = form.querySelector("input[name='title']").value.trim();
+        const categoryId = form.querySelector("select[name='category']").value;
+        if (!title) { return; }
+        card.title = title;
+        card.categoryId = categoryId || "";
+        saveState();
+        renderBoard();
+    }
+}
