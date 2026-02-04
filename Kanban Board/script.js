@@ -680,6 +680,7 @@ function handleBoardSubmit(e) {
         card.title = title;
         card.categoryId = categoryId || "";
         saveState();
+        uiState.editingCardId = null;
         renderBoard();
     }
 }
