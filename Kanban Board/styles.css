@@ -1,7 +1,6 @@
 /* No imports allowed ----<
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
- Ubuntu >-----
-*/
+ Ubuntu >----- */
 
 :root {
     --bg: #d9c7b4;
@@ -13,8 +12,6 @@
     --outline: rgba(169, 169, 169, 0.4);
 }
 
-
-
 * {
     font-family: 'Arial', sans-serif;
     box-sizing: border-box;
@@ -22,15 +19,11 @@
     padding: 0;
 }
 
-
-
 body {
     background-color: var(--bg);
     color: var(--text);
     min-height: 100vh;
 }
-
-
 
 .container {
     text-align: center;
@@ -38,62 +31,7 @@ body {
     padding: 1.2rem;
 }
 
-
-
-.board {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    justify-content: space-around;
-    align-items: left;
-    text-align: left;
-    width: 100%;
-    max-width: none; /* allow board to span full viewport width */
-    margin: 0 auto;
-    gap: 1rem;
-}
-
-
-
-.list {
-    box-shadow: 10px 10px 5px var(--safi-color);
-    background-color: #2c3e50e6;
-    border-radius: 5%;
-    padding: 1rem;
-    min-width: 200px;
-    width: 30%;
-}
-
-
-
-.list>h2 {
-    font-size: 1.9rem;
-    border-bottom: 1px solid white;
-    margin-bottom: 1rem;
-}
-
-.list.over { background-color: var(--safi-color); }
-
-.card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.2);
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 5%;
-    box-shadow: 0 0px 3px white;
-    cursor: grab;
-    transition: all 0.1s ease-in-out;
-}
-
-.card:active {
-    cursor: grabbing;
-    box-shadow: 0px 0px 5px white;
-}
-
-
-
-/* ============= Media and Keyframes =================*/
+/* ============= Responsiveness ================= */
 
 @media (min-width: 768px) {
     body {
@@ -103,9 +41,7 @@ body {
     }
 
     html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
-        display: none;
-    }
+    body::-webkit-scrollbar { display: none; }
 }
 
 /* ============== New Additions ============== */
@@ -126,22 +62,23 @@ body {
     z-index: 5;
 }
 
-.rightNav,
-.leftNav {
+.rightNav, .leftNav {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.header button,
-.header select {
+.header button, .header select {
     background-color: rgba(255, 255, 255, 0.08);
     color: var(--text);
-    border: 1px solid var(--outline);
     padding: 0.45rem 0.9rem;
+    border: 1px solid var(--outline);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+}
+
+.header select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -152,17 +89,12 @@ body {
     padding-right: 2rem;
 }
 
-.header select:focus {
-    outline: 1px solid var(--accent);
-}
-
 .header select option {
     background-color: var(--surface);
     color: var(--text);
 }
 
-.header button:hover,
-.header select:hover {
+.header button:hover, .header select:hover {
     border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(-1px);
 }
@@ -181,14 +113,11 @@ body {
     background-repeat: no-repeat;
     background-position: right 0.5rem center;
     background-size: 1rem;
-}
-
-.searchBar::placeholder {
-    color: white;
-} /* Search bars go darker before a value is given */
+} .searchBar::placeholder { color: white; } /* Search bars go darker before a value is given */
 
 /* <--- List Container ---> */
- .container {
+
+.container {
     width: 100vw;
     margin-top: 4.5rem;
     height: calc(100vh - 4.5rem); /* Can't overflow to navbar */
@@ -222,11 +151,10 @@ body {
     max-height: 100%;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.35) transparent; 
+    scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 .list.dragging { opacity: 0.6; }
-
 .list-header {
     display: flex;
     align-items: center;
@@ -236,17 +164,11 @@ body {
     border-bottom: solid 1px var(--outline);
 }
 
-.list-title-display,
-.list-title-input {
+.list-title-display, .list-title-input {
     font-size: 1.3rem;
     font-weight: 600;
     width: 100%;
-}
-
-.list-title-display {
-    user-select: none;
-}
-/* Upon clicking the display div, it will disappear and be replaced by the input. Here in CSS, we are simply hiding the input before clicking */
+} .list-title-display { user-select: none; }
 
 .list-title-input {
     background: transparent;
@@ -257,7 +179,6 @@ body {
 
 .list.is-editing .list-title-display { display: none; }
 .list.is-editing .list-title-input { display: block; }
-
 .list-buttons button {
     display: flex;
     flex-direction: column;
@@ -267,13 +188,10 @@ body {
     transition: all 0.2s ease;
     cursor: pointer;
     font-size: 1.1rem;
-}
-
-.list-buttons button:hover {
-    transform: scale(1.2);
-}
+} .list-buttons button:hover { transform: scale(1.2); }
 
 /* <!---- Cards ------!> */
+
 .card-list {
     display: flex;
     flex-direction: column;
@@ -294,16 +212,12 @@ body {
     width: 100%;
 }
 
-.card:active:not(.dragging) {
-    cursor: grabbing;
-}
-
-.card.dragging {
-    opacity: 0.6;
-}
+.card:active:not(.dragging) { cursor: grabbing; }
+.card.dragging { opacity: 0.6; }
 
 .card-content {
     display: flex;
+    text-align: left;
     flex-direction: column;
     gap: 0.4rem;
 }
@@ -313,7 +227,8 @@ body {
     line-height: 1.3;
 }
 
-.card-tags {
+/* <!---- Card Modification ----!> */
+.card-tags { /* Tag Container */
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
@@ -330,43 +245,22 @@ body {
     font-size: 0.78rem;
 }
 
-.tag-remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.3);
-    font-size: 0.7rem;
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.9);
-    transition: all 0.2s ease;
-}
-
-.card.is-editing .card-tag:hover .tag-remove {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-}
-
 .card-actions {
     position: absolute;
-    top: 50%;
-    right: 0.5rem;
+    top: 0.5rem;
+    left: calc(100% - 2.5rem);
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     opacity: 0;
-    transform: translateY(-50%) translateX(6px);
+    transform: translateX(6px);
     pointer-events: none;
     transition: all 0.2s ease;
-}
+} /* Edit and Delete Buttons */
 
 .card:hover .card-actions {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(0);
     pointer-events: auto;
 }
 
@@ -384,8 +278,7 @@ body {
     font-size: 1rem;
 }
 
-.card-action.delete:hover,
-.list-buttons .delete-list:hover {
+.card-action.delete:hover, .list-buttons .delete-list:hover {
     transform: scale(1.2);
     color: #ff6b6b;
 }
@@ -411,8 +304,7 @@ body {
     color: var(--text);
 }
 
-.card-form,
-.card-edit-form {
+.card-form, .card-edit-form {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -423,10 +315,7 @@ body {
     width: 100%;
 }
 
-.card-form input,
-.card-form select,
-.card-edit-form input,
-.card-edit-form select {
+.card-form input, .card-form select, .card-edit-form input, .card-edit-form select {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--outline);
     border-radius: 8px;
@@ -434,21 +323,16 @@ body {
     padding: 0.5rem;
 }
 
-.card-form select option,
-.card-edit-form select option {
+.card-form select option, .card-edit-form select option {
     background-color: var(--surface);
     color: var(--text);
 }
 
-.card-form input:focus,
-.card-form select:focus,
-.card-edit-form input:focus,
-.card-edit-form select:focus,
+.card-form input:focus, .card-form select:focus,
+.card-edit-form input:focus, .card-edit-form select:focus,
 .searchBar:focus {
     outline: 1px solid var(--accent);
 }
-
-/* <!---- Card Modification div ----!> */
 
 .form-actions {
     display: flex;
@@ -474,3 +358,4 @@ body {
     border: 1px solid var(--outline);
     color: var(--text);
 }
+

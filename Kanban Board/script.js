@@ -1,19 +1,4 @@
-const cards = document.querySelectorAll(".card");
-const lists = document.querySelectorAll(".list");
-
-for (const card of cards) {
-    card.addEventListener("dragstart", dragStart);
-    card.addEventListener("dragend", dragEnd);
-}
-
-for (const list of lists) {
-    list.addEventListener("dragover", dragOver);
-    list.addEventListener("dragenter", dragEnter);
-    list.addEventListener("dragleave", dragLeave);
-    list.addEventListener("drop", dragDrop);
-}
-
-/* ======== Changes ======== */
+/* ===== All previous codes are in init or are modified ===== */
 
 function dragStart(e) {
     if (e.target.closest("button, input, select, textarea")) { return; }
@@ -53,24 +38,24 @@ function handleDragEnd() {
     }
 }
 
+function insertDragElement(element, container, afterElement) {
+    if (!afterElement) {
+        if (element.parentElement !== container || element !== container.lastElementChild) {
+            container.appendChild(element);
+        } return;
+    } if (afterElement === element) { return; }
+    if (element.parentElement === container && element.nextElementSibling === afterElement) { return; }
+    container.insertBefore(element, afterElement);
+}
+
 function handleDragOver(e) {
     /* <---- List Dragging ----> */
     if (activeDragList) {
         e.preventDefault();
         const afterElement = getListAfterElement(board, e.clientX);
-        if (!afterElement) { // Dragged to the very right
-            if (activeDragList.parentElement !== board || activeDragList !== board.lastElementChild) {
-                board.appendChild(activeDragList);
-            } return;
-        }
-        if (afterElement === activeDragList) { return; }
-        if (activeDragList.parentElement === board && activeDragList.nextElementSibling === afterElement) {
-            return;
-        } // Basically before the next element (Right position)
-        board.insertBefore(activeDragList, afterElement);
+        insertDragElement(activeDragList, board, afterElement);
         return;
-    }
-    const list = e.target.closest(".list");
+    } const list = e.target.closest(".list");
     if (!list || !activeDragCard || isFilterActive()) { return; }
     
     /* <---- Card Dragging ----> */
@@ -79,14 +64,7 @@ function handleDragOver(e) {
     if (!cardList) { return; }
     
     const afterElement = getDragAfterElement(cardList, e.clientY);
-    if (!afterElement) {
-        if (activeDragCard.parentElement !== cardList || activeDragCard !== cardList.lastElementChild) {
-            cardList.appendChild(activeDragCard);
-        } return;
-    }
-    if (afterElement === activeDragCard) { return; }
-    if (activeDragCard.parentElement === cardList && activeDragCard.nextElementSibling === afterElement) { return; }
-    cardList.insertBefore(activeDragCard, afterElement); // Same parent repositioning
+    insertDragElement(activeDragCard, cardList, afterElement);
 }
 
 function handleDragEnter(e) { // Can't reposition lists on state while filtering
@@ -105,17 +83,13 @@ function handleDragLeave(e) { // Highlight while dragging
 }
 
 function handleDragDrop(e) {
-    /* Synchronize data */
-    if (activeDragList) {
+    if (activeDragList) { /* Synchronize data */
         e.preventDefault();
         syncListsFromDom();
         saveState();
         return;
-    }
-    const list = e.target.closest(".list");
-    if (!list || isFilterActive()) {
-        return;
-    }
+    } const list = e.target.closest(".list");
+    if (!list || isFilterActive()) { return; }
 
     /* Highlight Removal */
     e.preventDefault();
@@ -125,7 +99,7 @@ function handleDragDrop(e) {
 }
 
 /* ======= New Code ========== */
-const storageKey = "kanbanBoardState"; /* Thinking about this */
+const storageKey = "kanbanBoardState";
 
 let board = document.querySelector(".board");
 const addListButton = document.getElementById("add-list");
@@ -143,19 +117,15 @@ let activeDragList = null;
 
 // For card editing
 let uiState = { editingCardId: null, activeFormListId: null, filterText: "", filterCategory: "", projectName: "" };
-
 function isFilterActive() {
-    // Use lightweight UI state for filtering
     return (uiState.filterText && uiState.filterText.length > 0) || (uiState.filterCategory && uiState.filterCategory !== "" && uiState.filterCategory !== "all");
 }
-
 
 function init() {
     if (!board) { // Retry if board is somehow not initialized
         setTimeout(init, 50);
         return;
-    }
-    if (addListButton) { addListButton.addEventListener("click", handleAddList); }
+    } if (addListButton) { addListButton.addEventListener("click", handleAddList); }
     if (createCategoryButton) { createCategoryButton.addEventListener("click", handleCreateCategory); }
     if (deleteCategorySelect) { deleteCategorySelect.addEventListener("change", handleDeleteCategory); }
     if (categoryFilterSelect) { categoryFilterSelect.addEventListener("change", handleCategoryFilter); }
@@ -180,17 +150,13 @@ function init() {
 function loadState() {
     try {
         const raw = localStorage.getItem(storageKey);
-        if (!raw) {
-            return getDefaultState();
-        } /* No Data */
+        if (!raw) { return getDefaultState(); } /* No Data */
         const parsed = JSON.parse(raw);
         if (!parsed || !Array.isArray(parsed.lists) || !Array.isArray(parsed.categories)) {
             return getDefaultState();
         } /* Validates Lists and Categories */
         parsed.lists.forEach(list => {
-            if (!Array.isArray(list.cards)) {
-                list.cards = [];
-            } /* Validates Cards in Lists */
+            if (!Array.isArray(list.cards)) { list.cards = []; } /* Validates Cards in Lists */
         });
         return parsed;
     } catch (error) { return getDefaultState(); }
@@ -204,43 +170,39 @@ function getDefaultState() {
                 cards: []
             }], categories: []
     };
-}
-
-function saveState() { 
-    localStorage.setItem(storageKey, JSON.stringify(state));
-}
+} function saveState() { localStorage.setItem(storageKey, JSON.stringify(state)); }
 
 /* <!---- Group Creators ----> */
 function createListElement(list, filteredCards) {
     const listElement = document.createElement("div");
-    listElement.className = "list";
-    listElement.dataset.listId = list.id;
-    listElement.draggable = true;
+        listElement.className = "list";
+        listElement.dataset.listId = list.id;
+        listElement.draggable = true;
 
     const header = document.createElement("div");
-    header.className = "list-header";
+        header.className = "list-header";
 
     const titleDisplay = document.createElement("div");
-    titleDisplay.className = "list-title-display";
-    titleDisplay.textContent = list.title;
-    titleDisplay.dataset.listId = list.id;
+        titleDisplay.className = "list-title-display";
+        titleDisplay.textContent = list.title;
+        titleDisplay.dataset.listId = list.id;
 
     const titleInput = document.createElement("input");
-    titleInput.className = "list-title-input";
-    titleInput.type = "text";
-    titleInput.value = list.title;
-    titleInput.dataset.listId = list.id;
-    titleInput.id = `list-title-${list.id}`;
-    titleInput.setAttribute("aria-label", "List title");
+        titleInput.className = "list-title-input";
+        titleInput.type = "text";
+        titleInput.value = list.title;
+        titleInput.dataset.listId = list.id;
+        titleInput.id = `list-title-${list.id}`;
+        titleInput.setAttribute("aria-label", "List title");
 
     const buttonGroup = document.createElement("div");
-    buttonGroup.className = "list-buttons";
+        buttonGroup.className = "list-buttons";
 
     const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "delete-list";
-    deleteButton.textContent = "🗑";
-    deleteButton.setAttribute("aria-label", "Delete list");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-list";
+        deleteButton.textContent = "🗑";
+        deleteButton.setAttribute("aria-label", "Delete list");
 
     buttonGroup.appendChild(deleteButton);
     header.appendChild(titleDisplay);
@@ -248,45 +210,39 @@ function createListElement(list, filteredCards) {
     header.appendChild(buttonGroup);
 
     const cardList = document.createElement("div");
-    cardList.className = "card-list";
+        cardList.className = "card-list";
 
     const cardsToRender = filteredCards || list.cards;
-    cardsToRender.forEach(card => {
-        cardList.appendChild(createCardElement(card, list.id));
-    });
+        cardsToRender.forEach(card => { cardList.appendChild(createCardElement(card, list.id)); });
 
     const addCardButton = document.createElement("button");
-    addCardButton.type = "button";
-    addCardButton.className = "add-card";
-    addCardButton.textContent = "Add Card";
+        addCardButton.type = "button";
+        addCardButton.className = "add-card";
+        addCardButton.textContent = "Add Card";
 
     listElement.appendChild(header);
     listElement.appendChild(cardList);
     listElement.appendChild(addCardButton);
-    // Thinking about this, it seems to be passively appending outside the add list button
-    if (uiState.activeFormListId === list.id) {
-        listElement.appendChild(createCardForm(list.id));
-    } return listElement;
+
+    if (uiState.activeFormListId === list.id) { listElement.appendChild(createCardForm(list.id)); }
+    return listElement;
 }
 
 function createCardElement(card, listId) {
-    if (uiState.editingCardId === card.id) {
-        return createCardEditForm(card, listId);
-    }
+    if (uiState.editingCardId === card.id) { return createCardEditForm(card, listId); }
     
     const cardElement = document.createElement("div");
-    cardElement.className = "card";
-    cardElement.draggable = !isFilterActive();
-    cardElement.dataset.cardId = card.id;
-    cardElement.dataset.listId = listId;
-
-    
+        cardElement.className = "card";
+        cardElement.draggable = !isFilterActive();
+        cardElement.dataset.cardId = card.id;
+        cardElement.dataset.listId = listId;
+  
     const content = document.createElement("div");
-    content.className = "card-content";
+        content.className = "card-content";
 
     const title = document.createElement("div");
-    title.className = "card-title";
-    title.textContent = card.title;
+        title.className = "card-title";
+        title.textContent = card.title;
 
     content.appendChild(title);
 
@@ -306,12 +262,11 @@ function createCardElement(card, listId) {
     actions.className = "card-actions";
 
     const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.className = "card-action edit";
-    editButton.textContent = "✎";
-    editButton.setAttribute("aria-label", "Edit card");
+        editButton.type = "button";
+        editButton.className = "card-action edit";
+        editButton.textContent = "✎";
+        editButton.setAttribute("aria-label", "Edit card");
     
-    // Add direct click listener
     editButton.addEventListener("click", function(e) {
         e.stopPropagation();
         const cardElement = this.closest(".card");
@@ -324,12 +279,11 @@ function createCardElement(card, listId) {
     });
 
     const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "card-action delete";
-    deleteButton.textContent = "🗑";
-    deleteButton.setAttribute("aria-label", "Delete card");
+        deleteButton.type = "button";
+        deleteButton.className = "card-action delete";
+        deleteButton.textContent = "🗑";
+        deleteButton.setAttribute("aria-label", "Delete card");
     
-    // Add direct click listener
     deleteButton.addEventListener("click", function(e) {
         e.stopPropagation();
         const cardId = this.closest(".card").dataset.cardId;
@@ -348,29 +302,29 @@ function createCardElement(card, listId) {
 
 function createCardForm(listId) {
     const form = document.createElement("form");
-    form.className = "card-form";
-    form.dataset.listId = listId;
+        form.className = "card-form";
+        form.dataset.listId = listId;
 
     const titleInput = document.createElement("input");
-    titleInput.type = "text";
-    titleInput.name = "title";
-    titleInput.placeholder = "Task name";
-    titleInput.required = true;
+        titleInput.type = "text";
+        titleInput.name = "title";
+        titleInput.placeholder = "Task name";
+        titleInput.required = true;
 
     const categorySelect = createCategorySelect("");
 
     const actions = document.createElement("div");
-    actions.className = "form-actions";
+        actions.className = "form-actions";
 
     const submitButton = document.createElement("button");
-    submitButton.type = "submit";
-    submitButton.className = "submit";
-    submitButton.textContent = "Add";
+        submitButton.type = "submit";
+        submitButton.className = "submit";
+        submitButton.textContent = "Add";
 
     const cancelButton = document.createElement("button");
-    cancelButton.type = "button";
-    cancelButton.className = "cancel cancel-card";
-    cancelButton.textContent = "Cancel";
+        cancelButton.type = "button";
+        cancelButton.className = "cancel cancel-card";
+        cancelButton.textContent = "Cancel";
 
     actions.appendChild(submitButton);
     actions.appendChild(cancelButton);
@@ -384,46 +338,39 @@ function createCardForm(listId) {
 
 function createCardEditForm(card, listId) {
     const form = document.createElement("form");
-    form.className = "card-edit-form";
-    form.dataset.cardId = card.id;
-    form.dataset.listId = listId;
+        form.className = "card-edit-form";
+        form.dataset.cardId = card.id;
+        form.dataset.listId = listId;
 
     const titleInput = document.createElement("input");
-    titleInput.type = "text";
-    titleInput.name = "title";
-    titleInput.value = card.title;
-    titleInput.required = true;
+        titleInput.type = "text";
+        titleInput.name = "title";
+        titleInput.value = card.title;
+        titleInput.required = true;
 
     const tags = document.createElement("div");
-    tags.className = "card-tags";
+        tags.className = "card-tags";
 
     if (card.categoryId) {
         const tag = document.createElement("span");
         tag.className = "card-tag";
         tag.textContent = getCategoryName(card.categoryId);
 
-        const remove = document.createElement("span");
-        remove.className = "tag-remove";
-        remove.textContent = "x";
-
-        tag.appendChild(remove);
         tags.appendChild(tag);
-    }
-
-    const categorySelect = createCategorySelect(card.categoryId);
+    } const categorySelect = createCategorySelect(card.categoryId);
 
     const actions = document.createElement("div");
-    actions.className = "form-actions";
+        actions.className = "form-actions";
 
     const submitButton = document.createElement("button");
-    submitButton.type = "submit";
-    submitButton.className = "submit";
-    submitButton.textContent = "Save";
+        submitButton.type = "submit";
+        submitButton.className = "submit";
+        submitButton.textContent = "Save";
 
     const cancelButton = document.createElement("button");
-    cancelButton.type = "button";
-    cancelButton.className = "cancel cancel-edit";
-    cancelButton.textContent = "Cancel";
+        cancelButton.type = "button";
+        cancelButton.className = "cancel cancel-edit";
+        cancelButton.textContent = "Cancel";
 
     actions.appendChild(submitButton);
     actions.appendChild(cancelButton);
@@ -449,9 +396,7 @@ function createCategorySelect(selectedId) {
         const categoryOption = document.createElement("option");
         categoryOption.value = category.id;
         categoryOption.textContent = category.name;
-        if (category.id === selectedId) {
-            categoryOption.selected = true;
-        }
+        if (category.id === selectedId) { categoryOption.selected = true; }
         select.appendChild(categoryOption);
     });
     return select;
@@ -479,8 +424,7 @@ function renderCategoryControls() {
             categoryFilterSelect.add(new Option(category.name, category.id));
         });
         categoryFilterSelect.value = uiState.filterCategory || "";
-    }
-    if (deleteCategorySelect) {
+    } if (deleteCategorySelect) {
         deleteCategorySelect.innerHTML = "";
         deleteCategorySelect.appendChild(createPlaceholderOption("Delete Category"));
         state.categories.forEach(category => {
@@ -498,9 +442,7 @@ function renderProjectControls() {
         projectSelect.add(new Option(list.title, list.title));
     });
     projectSelect.value = uiState.projectName || "";
-    if (!projectSelect.value) {
-        projectSelect.selectedIndex = 0;
-    }
+    if (!projectSelect.value) { projectSelect.selectedIndex = 0; }
 }
 
 
@@ -517,11 +459,8 @@ function createPlaceholderOption(label) {
 function findCardById(cardId) {
     for (const list of state.lists) {
         const card = list.cards.find(item => item.id === cardId);
-        if (card) {
-            return card;
-        }
-    }
-    return null;
+        if (card) { return card; }
+    } return null;
 }
 
 function removeCardById(cardId) {
@@ -550,14 +489,11 @@ function renderBoard() {
                 (card.categoryId && getCategoryName(card.categoryId).toLowerCase().includes(uiState.filterText)) ||
                 list.title.toLowerCase().includes(uiState.filterText)
             ));
-        }
-        if (uiState.filterCategory && uiState.filterCategory !== "" && uiState.filterCategory !== "all") {
+        } if (uiState.filterCategory && uiState.filterCategory !== "" && uiState.filterCategory !== "all") {
             cards = cards.filter(card => card.categoryId === uiState.filterCategory);
-        }
-        if (isFilterActive() && !(listMatches || cards.length > 0)) {
+        } if (isFilterActive() && !(listMatches || cards.length > 0)) {
             return;
-        }
-        board.appendChild(createListElement(list, cards));
+        } board.appendChild(createListElement(list, cards));
     });
     renderCategoryControls();
     renderProjectControls();
@@ -653,6 +589,7 @@ function handleCategoryFilter(e) {
     uiState.filterCategory = e.target.value;
     renderBoard();
 }
+
 function handleProjectChange(e) {
     const value = e.target.value;
     uiState.projectName = value === "all" ? "" : value;
@@ -701,36 +638,29 @@ function handleBoardClick(e) {
         renderBoard();
         return;
     }
-
-    const tagRemoveButton = e.target.closest(".tag-remove");
-    if (tagRemoveButton) {
-        const cardId = tagRemoveButton.closest(".card").dataset.cardId;
-        const card = findCardById(cardId);
-        if (card) {
-            card.categoryId = "";
-            saveState();
-            renderBoard();
-        }
-    }
 }
 
 function handleBoardChange(e) {
     const titleInput = e.target.closest(".list-title-input");
-    if (!titleInput) { return; }
     commitListTitle(titleInput.dataset.listId, titleInput.value);
 }
 
+function getFormData(form) {
+    return {
+        title: form.querySelector("input[name='title']").value.trim(),
+        categoryId: form.querySelector("select[name='category']").value
+    };
+}
+
 function handleBoardSubmit(e) {
-    const form = e.target.closest("form"); /* I'll check what form is later */
-    if (!form) { return; }
+    const form = e.target.closest("form");
     e.preventDefault();
 
     if (form.classList.contains("card-form")) {
         const listId = form.dataset.listId;
         const list = state.lists.find(item => item.id === listId);
         if (!list) { return; }
-        const title = form.querySelector("input[name='title']").value.trim();
-        const categoryId = form.querySelector("select[name='category']").value;
+        const { title, categoryId } = getFormData(form);
         if (!title) { return; }
         list.cards.push({
             id: createId("card"),
@@ -738,7 +668,7 @@ function handleBoardSubmit(e) {
             categoryId: categoryId || ""
         });
         saveState();
-        activeFormListId = null;
+        uiState.activeFormListId = null;
         renderBoard();
         return;
     }
@@ -747,8 +677,7 @@ function handleBoardSubmit(e) {
         const cardId = form.dataset.cardId;
         const card = findCardById(cardId);
         if (!card) { return; }
-        const title = form.querySelector("input[name='title']").value.trim();
-        const categoryId = form.querySelector("select[name='category']").value;
+        const { title, categoryId } = getFormData(form);
         if (!title) { return; }
         card.title = title;
         card.categoryId = categoryId || "";
@@ -761,29 +690,20 @@ function handleBoardSubmit(e) {
 function getDragAfterElement(container, y) {
     /* Handles Card Positioning */
     const cards = Array.from(container.querySelectorAll(".card:not(.dragging)"));
-    return cards.reduce((closest, card) => {
+    return cards.find(card => {
         const box = card.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-        if (offset < 0 && offset > closest.offset) { 
-            return { offset, element: card };
-        } return closest;
-    }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+        return y < box.top + box.height / 2;
+    }) || null;
 }
 
 function getListAfterElement(container, x) {
     /* Handles List Positioning */
     const lists = Array.from(container.querySelectorAll(".list:not(.dragging)"));
-    return lists.reduce((closest, list) => {
+    return lists.find(list => {
         const box = list.getBoundingClientRect();
-        const offset = x - box.left - box.width / 2;
-        if (offset < 0 && offset > closest.offset) {
-            return { offset, element: list };
-        } return closest;
-    }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+        return x < box.left + box.width / 2;
+    }) || null;
 }
-
-/* <!---- Styling ----> */
-/* I'll keep this in for now to track; for reference, list gets highlighted for as long as the cursor is within it, and focus locks inputs when editing, which is what it should do implicitly in the first place. */
 
 /* <!---- Board Interaction ----> */
 function handleBoardDblClick(e) {
@@ -801,8 +721,7 @@ function handleBoardDblClick(e) {
             titleInput.select();
         }
     }
-}
-
+} /* After clicking on the display div, put the input div to the front */
 
 function handleBoardKeyDown(e) {
     const titleInput = e.target.closest(".list-title-input");
@@ -811,11 +730,7 @@ function handleBoardKeyDown(e) {
         e.preventDefault();
         commitListTitle(titleInput.dataset.listId, titleInput.value);
     }
-    if (e.key === "Escape") {
-        e.preventDefault();
-        renderBoard();
-    } // Hardly Used
-}
+} /* Optionally, we can remove this and make focus out the only setter method */
 
 function handleBoardFocusOut(e) {
     const titleInput = e.target.closest(".list-title-input");
@@ -831,6 +746,4 @@ function commitListTitle(listId, nextValue) {
         list.title = nextTitle;
         saveState();
     } renderBoard();
-}
-
-init();
+} init();
