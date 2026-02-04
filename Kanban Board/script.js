@@ -40,7 +40,6 @@ function handleDragEnd() {
     if (activeDragCard) {
         activeDragCard.classList.remove("dragging");
         activeDragCard = null;
-        clearListHighlights();
         if (!isFilterActive()) {
             syncStateFromDom();
             saveState();
@@ -128,7 +127,7 @@ function handleDragDrop(e) {
 /* ======= New Code ========== */
 const storageKey = "kanbanBoardState"; /* Thinking about this */
 
-const board = document.querySelector(".board");
+let board = document.querySelector(".board");
 const addListButton = document.getElementById("add-list");
 const searchInput = document.getElementById("search-input");
 const createCategoryButton = document.getElementById("create-categories");
@@ -142,25 +141,25 @@ const state = loadState();
 let activeDragCard = null;
 let activeDragList = null;
 
+function isFilterActive() {
+    // Guard against early script load where searchInput may not yet exist
+    if (typeof searchInput === 'undefined' || !searchInput) { return false; }
+    return searchInput.value.trim().length > 0;
+}
+
+let activeFormListId = null;
+
 function init() {
-    if (addListButton) {
-        addListButton.addEventListener("click", handleAddList);
+    if (!board) { // Retry if board is somehow not initialized
+        setTimeout(init, 50);
+        return;
     }
-    if (createCategoryButton) {
-        createCategoryButton.addEventListener("click", handleCreateCategory);
-    }
-    if (deleteCategorySelect) {
-        deleteCategorySelect.addEventListener("change", handleDeleteCategory);
-    }
-    if (categoryFilterSelect) {
-        categoryFilterSelect.addEventListener("change", handleCategoryFilter);
-    }
-    if (projectSelect) {
-        projectSelect.addEventListener("change", handleProjectChange);
-    }
-    if (searchInput) {
-        attachSearchHandler();
-    }
+    if (addListButton) { addListButton.addEventListener("click", handleAddList); }
+    if (createCategoryButton) { createCategoryButton.addEventListener("click", handleCreateCategory); }
+    if (deleteCategorySelect) { deleteCategorySelect.addEventListener("change", handleDeleteCategory); }
+    if (categoryFilterSelect) { categoryFilterSelect.addEventListener("change", handleCategoryFilter); }
+    if (projectSelect) { projectSelect.addEventListener("change", handleProjectChange); }
+    if (searchInput) { attachSearchHandler(); }
     if (board) {
         board.addEventListener("click", handleBoardClick);
         board.addEventListener("dblclick", handleBoardDblClick);
@@ -168,14 +167,14 @@ function init() {
         board.addEventListener("submit", handleBoardSubmit);
         board.addEventListener("keydown", handleBoardKeyDown);
         board.addEventListener("focusout", handleBoardFocusOut);
-        board.addEventListener("dragstart", handleDragStart);
+        board.addEventListener("dragstart", dragStart);
         board.addEventListener("dragend", handleDragEnd);
         board.addEventListener("dragover", handleDragOver);
         board.addEventListener("dragenter", handleDragEnter);
         board.addEventListener("dragleave", handleDragLeave);
         board.addEventListener("drop", handleDragDrop);
     } renderBoard();
-} /* Re-render every update or filtration */
+}
 
 function loadState() {
     try {
@@ -263,7 +262,11 @@ function createListElement(list, filteredCards) {
     listElement.appendChild(cardList);
     listElement.appendChild(addCardButton);
 
-    return listElement;
+    // Simple inline form toggle for adding a card, without uiState
+    // Thinking about this, it seems to be passively appending outside the add list button
+    if (activeFormListId === list.id) {
+        listElement.appendChild(createCardForm(list.id));
+    } return listElement;
 }
 
 function createCardElement(card, listId) {
@@ -448,7 +451,7 @@ function removeCardById(cardId) {
         list.cards = list.cards.filter(card => card.id !== cardId);
     });
 }
-/* ======== Cut off ====== */
+
 function createId(prefix) {
     return `${prefix}-${Math.random().toString(36).slice(2, 9)}-${Date.now().toString(36)}`;
 } /* Name - Base36 (0-9, a-z) without '0.' - Timestamp */
@@ -457,7 +460,8 @@ function renderBoard() {
     if (!board) { return; }
     while (board.firstChild) { board.removeChild(board.firstChild); }
     state.lists.forEach(list => {
-        board.appendChild(createListElement(list));
+        const filteredCards = list.cards; // Doesn't call uiState for filtered lists
+        board.appendChild(createListElement(list, filteredCards));
     });
 }
 
@@ -548,26 +552,32 @@ function handleDeleteCategory(e) {
 
 function handleCategoryFilter() { renderBoard(); }
 function handleProjectChange() { renderBoard(); }
-/* These can be completely removed later */
 
 /* <!---- Board Logic ----> */
 function handleBoardClick(e) {
     const addCardButton = e.target.closest(".add-card");
     if (addCardButton) {
-        renderBoard();
+        const list = addCardButton.closest('.list');
+        const listId = list ? list.dataset.listId : null;
+        if (listId) {
+            activeFormListId = listId;
+            renderBoard();
+        }
         return;
     }
 
     const deleteListButton = e.target.closest(".delete-list");
     if (deleteListButton) {
-        state.lists = state.lists.filter(list => list.id !== listId);
-        if (uiState.projectName && !state.lists.some(list => list.title === uiState.projectName)) {
-            uiState.projectName = "";
-        }
+        const list = deleteListButton.closest('.list');
+        const listId = list ? list.dataset.listId : null;
+        if (!listId) { return; }
+        state.lists = state.lists.filter(l => l.id !== listId);
         if (!state.lists.length) {
             state.lists.push({ id: createId("list"), title: "To Do", cards: []});
         }
         saveState();
+        // Reset any active form if list deleted
+        if (activeFormListId) { activeFormListId = null; }
         renderBoard();
         return;
     }
@@ -589,6 +599,7 @@ function handleBoardClick(e) {
 
     const cancelCardButton = e.target.closest(".cancel-card");
     if (cancelCardButton) {
+        activeFormListId = null;
         renderBoard();
         return;
     }
@@ -614,7 +625,6 @@ function handleBoardClick(e) {
 function handleBoardChange(e) {
     const titleInput = e.target.closest(".list-title-input");
     if (!titleInput) { return; }
-    if (!uiState.editingListId || uiState.editingListId !== titleInput.dataset.listId) { return; }
     commitListTitle(titleInput.dataset.listId, titleInput.value);
 }
 
@@ -636,6 +646,7 @@ function handleBoardSubmit(e) {
             categoryId: categoryId || ""
         });
         saveState();
+        activeFormListId = null;
         renderBoard();
         return;
     }
@@ -680,41 +691,9 @@ function getListAfterElement(container, x) {
 }
 
 /* <!---- Styling ----> */
-function clearListHighlights() {
-    if (!board) { return; } 
-    board.querySelectorAll(".list").forEach(list => list.classList.remove("over"));
-}
-
-function focusCardForm(listId) {
-    if (!board) { return; }
-    const listElement = board.querySelector(`.list[data-list-id='${listId}']`);
-    if (!listElement) { return; }
-    const input = listElement.querySelector(".card-form input[name='title']");
-    if (input) { input.focus(); }
-}
-
-function focusEditForm(cardId) {
-    if (!board) { return; }
-    
-    const cardElement = board.querySelector(`.card[data-card-id='${cardId}']`);
-    if (!cardElement) { return; }
-
-    const input = cardElement.querySelector(".card-edit-form input[name='title']");
-    if (input) { input.focus(); }
-}
-
-function focusListTitle(listId) {
-    if (!board) { return; }
-    
-    const listElement = board.querySelector(`.list[data-list-id='${listId}']`);
-    if (!listElement) { return; }
-    
-    const input = listElement.querySelector(".list-title-input");
-    if (input) {
-        input.focus();
-        input.select();
-    }
-}
+/* Styling highlights delegated to CSS; removed JS highlight helper */
+/* focus helpers removed in favor of CSS-driven behavior */
+/* I'll keep this in for now to track; for reference, list gets highlighted for as long as the cursor is within it, and focus locks inputs when editing, which is what it should do implicitly in the first place. */
 
 /* <!---- Board Interaction ----> */
 function handleBoardDblClick(e) {
@@ -722,7 +701,6 @@ function handleBoardDblClick(e) {
     if (!titleDisplay) { return; }
     const listId = titleDisplay.dataset.listId;
     renderBoard();
-    focusListTitle(listId);
 }
 
 function handleBoardKeyDown(e) {
@@ -734,7 +712,6 @@ function handleBoardKeyDown(e) {
     }
     if (e.key === "Escape") {
         e.preventDefault();
-        uiState.editingListId = null;
         renderBoard();
     } // Hardly Used
 }
@@ -742,7 +719,6 @@ function handleBoardKeyDown(e) {
 function handleBoardFocusOut(e) {
     const titleInput = e.target.closest(".list-title-input");
     if (!titleInput) { return; }
-    if (!uiState.editingListId) { return; }
     commitListTitle(titleInput.dataset.listId, titleInput.value);
 }
 
@@ -751,10 +727,9 @@ function commitListTitle(listId, nextValue) {
     if (!list) { return; }
     const nextTitle = nextValue.trim();
     if (nextTitle) {
-        if (uiState.projectName && uiState.projectName === list.title) {
-            uiState.projectName = nextTitle;
-        } list.title = nextTitle;
+        list.title = nextTitle;
         saveState();
-    } uiState.editingListId = null;
-    renderBoard();
+    } renderBoard();
 }
+
+init();
