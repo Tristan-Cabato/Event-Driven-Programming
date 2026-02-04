@@ -55,87 +55,55 @@ body {
 
 
 .list {
-
     box-shadow: 10px 10px 5px var(--safi-color);
-
     background-color: #2c3e50e6;
-
     border-radius: 5%;
-
     padding: 1rem;
-
     min-width: 200px;
-
     width: 30%;
-
 }
 
 
 
 .list>h2 {
-
     font-size: 1.9rem;
-
     border-bottom: 1px solid white;
-
     margin-bottom: 1rem;
-
 }
 
-
-
-.list.over {
-
-    background-color: var(--safi-color);
-
-}
-
-
+.list.over { background-color: var(--safi-color); }
 
 .card {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.2);
-
     margin-bottom: 0.5rem;
-
     padding: 0.5rem;
-
     border-radius: 5%;
-
     box-shadow: 0 0px 3px white;
-
     cursor: grab;
-
     transition: all 0.1s ease-in-out;
-
 }
 
-
-
 .card:active {
-
     cursor: grabbing;
-
     box-shadow: 0px 0px 5px white;
-
 }
 
 
 
 /* ============= Media and Keyframes =================*/
 
+@media (min-width: 768px) {
+    body {
+        overflow: hidden;
+        width: 100%;
+    }
 
-
-@media (max-width: 770px) {
-
-    .board {
-
-        flex-direction: column;
-
-        align-items: center;
-
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none;
     }
 }
 
@@ -243,10 +211,6 @@ body {
 
 .list.dragging { opacity: 0.6; }
 
-/* .list.over { 
-    outline: 2px dashed var(--accent); 
-} Holding this, supposedly it highlights the list being dragged over */
-
 .list-header {
     display: flex;
     align-items: center;
@@ -266,6 +230,7 @@ body {
 .list-title-display {
     user-select: none;
 }
+/* Upon clicking the display div, it will disappear and be replaced by the input. Here in CSS, we are simply hiding the input before clicking */
 
 .list-title-input {
     background: transparent;
@@ -274,23 +239,8 @@ body {
     display: none;
 }
 
-.list.is-editing .list-title-display {
-    display: none;
-}
-
-.list.is-editing .list-title-input {
-    display: block;
-}
-
-.list-title-input:focus {
-    outline: 1px solid var(--outline);
-    border-radius: 6px;
-}
-
-.list-buttons {
-    display: flex;
-    gap: 0.4rem;
-}
+.list.is-editing .list-title-display { display: none; }
+.list.is-editing .list-title-input { display: block; }
 
 .list-buttons button {
     display: flex;
@@ -304,5 +254,201 @@ body {
 }
 
 .list-buttons button:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
+}
+
+/* <!---- Cards ------!> */
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.card {
+    position: relative;
+    display: block;
+    background-color: rgba(255, 255, 255, 0.08);
+    margin-bottom: 0.2rem;
+    padding: 0.7rem 2.4rem 0.7rem 0.7rem;
+    border-radius: 12px;
+    border: 1px solid var(--outline);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+    cursor: grab;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+}
+
+.card:active:not(.dragging) {
+    cursor: grabbing;
+}
+
+.card.dragging {
+    opacity: 0.6;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.card-title {
+    font-size: 0.98rem;
+    line-height: 1.3;
+}
+
+.card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(97, 182, 166, 0.2);
+    border: 1px solid rgba(97, 182, 166, 0.45);
+    font-size: 0.78rem;
+}
+
+.tag-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 0.7rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9);
+    transition: all 0.2s ease;
+}
+
+.card.is-editing .card-tag:hover .tag-remove {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.card-actions {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    opacity: 0;
+    transform: translateX(6px);
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.card:hover .card-actions {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.card.is-editing .card-actions {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.card-action {
+    border: none;
+    background: none;
+    color: var(--text);
+    transition: ease 0.2s all;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.card-action.delete:hover,
+.list-buttons .delete-list:hover {
+    transform: scale(1.2);
+    color: #ff6b6b;
+}
+
+.card-action.edit:hover {
+    transform: scale(1.2);
+    color: #7cf0c3;
+}
+
+.add-card {
+    background: transparent;
+    border: 1px dashed var(--outline);
+    color: var(--muted);
+    padding: 0.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.add-card:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.card-form,
+.card-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.6rem;
+    border-radius: 12px;
+    border: 1px solid var(--outline);
+    background: rgba(0, 0, 0, 0.12);
+    width: 100%;
+}
+
+.card-form input,
+.card-form select,
+.card-edit-form input,
+.card-edit-form select {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--outline);
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    color: var(--text);
+}
+
+.card-form input:focus,
+.card-form select:focus,
+.card-edit-form input:focus,
+.card-edit-form select:focus,
+.searchBar:focus {
+    outline: 1px solid var(--accent);
+}
+
+/* <!---- Card Modification div ----!> */
+
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.form-actions button {
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.form-actions .submit {
+    background: var(--accent);
+    color: #0b1a1d;
+}
+
+.form-actions .cancel {
+    background: transparent;
+    border: 1px solid var(--outline);
+    color: var(--text);
 }
