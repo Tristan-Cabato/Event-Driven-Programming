@@ -164,6 +164,8 @@ body {
     scrollbar-color: rgba(255, 255, 255, 0.35) transparent; 
 }
 
+/* <!===== On Hold
+
 .list::-webkit-scrollbar {
     height: 10px;
 }
@@ -184,6 +186,8 @@ body {
 .list.over {
     outline: 2px dashed var(--accent);
 }
+
+=========> */
 
 .list-header {
     display: flex;

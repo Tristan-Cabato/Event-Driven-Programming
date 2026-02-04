@@ -118,8 +118,6 @@ body {
 
     cursor: grabbing;
 
-    transform: scale(1.2);
-
     box-shadow: 0px 0px 5px white;
 
 }
@@ -192,19 +190,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* .header select {
-    appearance: none;
-    padding-right: 2rem;
-    background-image:
-        linear-gradient(45deg, transparent 50%, rgba(248, 250, 252, 0.7) 50%),
-        linear-gradient(135deg, rgba(248, 250, 252, 0.7) 50%, transparent 50%);
-    background-position:
-        calc(100% - 16px) 55%,
-        calc(100% - 11px) 55%;
-    background-size: 6px 6px, 6px 6px;
-    background-repeat: no-repeat;
-} -- Can delete --*/
-
 .searchBar {
     width: 30%;
     min-width: 180px;
@@ -254,4 +239,70 @@ body {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.35) transparent; 
+}
+
+.list.dragging { opacity: 0.6; }
+
+/* .list.over { 
+    outline: 2px dashed var(--accent); 
+} Holding this, supposedly it highlights the list being dragged over */
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: solid 1px var(--outline);
+}
+
+.list-title-display,
+.list-title-input {
+    font-size: 1.3rem;
+    font-weight: 600;
+    width: 100%;
+}
+
+.list-title-display {
+    user-select: none;
+}
+
+.list-title-input {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    display: none;
+}
+
+.list.is-editing .list-title-display {
+    display: none;
+}
+
+.list.is-editing .list-title-input {
+    display: block;
+}
+
+.list-title-input:focus {
+    outline: 1px solid var(--outline);
+    border-radius: 6px;
+}
+
+.list-buttons {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.list-buttons button {
+    display: flex;
+    flex-direction: column;
+    background: none;
+    border: none;
+    color: var(--text);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.list-buttons button:hover {
+    transform: scale(1.1);
 }
